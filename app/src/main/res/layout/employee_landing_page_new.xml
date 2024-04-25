@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".emplo.EmployeeLandingPage">
+
+    <LinearLayout
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:background="@android:drawable/bottom_bar"
+        android:gravity="center_vertical"
+        android:id="@+id/linear_layout">
+
+        <Button
+            android:id="@+id/employee_search_button"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="search"
+            tools:ignore="HardcodedText" />
+
+        <Button
+            android:id="@+id/employee_logout_button"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Logout"
+            tools:ignore="HardcodedText" />
+
+
+        <!--            <Button-->
+        <!--                android:id="@+id/locationButtonEmployee"-->
+        <!--                android:layout_width="wrap_content"-->
+        <!--                android:layout_height="wrap_content"-->
+        <!--                android:layout_weight="1"-->
+        <!--                android:text="Get Location" />-->
+
+    </LinearLayout>
+
+    <ListView
+        android:id="@+id/employee_job_list"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/linear_layout"/>
+</RelativeLayout>

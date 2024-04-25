@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:android.support.design="http://schemas.android.com/apk/res-auto"
+    tools:context=".emplo.EmployeeList">
+
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="0dp"
+        android:background="#673AB7"
+        android:gravity="center"
+        android:hint="Job Employee"
+        android:textColorHint="@color/white" />
+
+
+    <TextView
+        android:id="@+id/subTitle"
+        android:layout_width="409dp"
+        android:layout_height="29dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="42dp"
+        android:layout_marginEnd="0dp"
+        android:gravity="center_vertical"
+        android:hint="  * Press on the employee to pay"
+        android:textSize="15dp" />
+
+    <ListView
+        android:id="@+id/employee_list_view"
+        android:layout_width="match_parent"
+        android:layout_height="650dp"
+        android:layout_below="@+id/subTitle"
+        android:layout_marginTop="-8dp"
+        android:clickable="true" />
+
+
+</RelativeLayout>

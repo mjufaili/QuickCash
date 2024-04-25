@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "972347485878",
+    "firebase_url": "https://g15-gp-default-rtdb.firebaseio.com",
+    "project_id": "g15-gp",
+    "storage_bucket": "g15-gp.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:972347485878:android:5d9bbb7df9349642080017",
+        "android_client_info": {
+          "package_name": "com.example.g15_gp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "972347485878-tv3f94msrt143k1uqn0c1e5cf1g1dsdh.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB2Vz8yT7d_oFqk7tHqJgCiAXEw5hjVapg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "972347485878-tv3f94msrt143k1uqn0c1e5cf1g1dsdh.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

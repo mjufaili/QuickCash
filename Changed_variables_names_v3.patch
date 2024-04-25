@@ -1,0 +1,432 @@
+Index: app/src/main/java/com/example/g15_gp/EmployeeLandingPage.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/g15_gp/EmployeeLandingPage.java b/app/src/main/java/com/example/g15_gp/EmployeeLandingPage.java
+new file mode 100644
+--- /dev/null	(date 1665884792626)
++++ b/app/src/main/java/com/example/g15_gp/EmployeeLandingPage.java	(date 1665884792626)
+@@ -0,0 +1,28 @@
++//package com.example.g15_gp;
++//
++//import android.app.Activity;
++//import android.content.Intent;
++//import android.os.Bundle;
++//import android.view.View;
++//import android.widget.Button;
++//
++//public class EmployeeLandingPage extends Activity implements View.OnClickListener{
++//    @Override
++//    public void onCreate(Bundle bundle) {
++//        super.onCreate(bundle);
++//        setContentView(R.layout.employee_landing_page);
++//        //Button logoutButton;
++//        //logoutButton = findViewById(R.id.logoutButton);
++//        //logoutButton.setOnClickListener(this);
++//        //TextView tv = findViewById(R.id.EmployerWelcomeText);
++//        //access the intent and show a welcome message
++//        Intent intent = getIntent();
++//        //tv.setText(intent.getStringExtra("Welcome Employer"));
++//    }
++//
++//
++//    @Override
++//    public void onClick(View view){
++//
++//    }
++//}
+Index: app/src/main/java/com/example/g15_gp/LoginActivity.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/g15_gp/LoginActivity.java b/app/src/main/java/com/example/g15_gp/LoginActivity.java
+--- a/app/src/main/java/com/example/g15_gp/LoginActivity.java	(revision 74a4000233513f550dce934561c4853546c0c277)
++++ b/app/src/main/java/com/example/g15_gp/LoginActivity.java	(date 1665890115402)
+@@ -5,11 +5,17 @@
+ import android.os.Bundle;
+ import android.view.View;
+ import android.widget.Button;
++import android.widget.CheckBox;
+ import android.widget.EditText;
+ import android.widget.Toast;
+ 
+ import androidx.annotation.NonNull;
+ 
++import com.google.android.gms.tasks.OnCompleteListener;
++import com.google.android.gms.tasks.Task;
++import com.google.firebase.auth.AuthResult;
++import com.google.firebase.auth.FirebaseAuth;
++import com.google.firebase.auth.FirebaseUser;
+ import com.google.firebase.database.DataSnapshot;
+ import com.google.firebase.database.DatabaseError;
+ import com.google.firebase.database.DatabaseReference;
+@@ -18,87 +24,71 @@
+ 
+ public class LoginActivity extends Activity implements View.OnClickListener {
+     // for storing values
+-    SharedPreferences sharedPreferences;
++    public static final String SHARED_PREFERENCES = "SharedPreferences";
++    public static String WELCOME_MESSAGE = "HELLO!";
+     Button loginButton;
+     EditText usernameBox;
+     EditText passwordBox;
++    private boolean employerCheck = false;
+ 
+-    private static String databaseUrl = "https://g15-gp-default-rtdb.firebaseio.com/";
+-    private FirebaseDatabase database;
+-    String correctUsername;
+-    String correctPassword;
++
++    private FirebaseAuth firebaseAuth;
+ 
+     @Override
+     public void onCreate(Bundle bundle){
+         super.onCreate(bundle);
+         setContentView(R.layout.activity_login);
+ 
++        // access the intent from register page
++        Intent intent = getIntent();
++        employerCheck = intent.getBooleanExtra("Employer", false);
++
++
+         loginButton = findViewById(R.id.loginButton);
+         usernameBox = findViewById(R.id.username);
+         passwordBox = findViewById(R.id.password);
+         loginButton.setOnClickListener(this);
+ 
+-        database = FirebaseDatabase.getInstance(databaseUrl);
+-
+-
+-
+-        DatabaseReference databaseReference = database.getReference("username");
+-        //databaseReference.setValue("abc");
+-        databaseReference.addValueEventListener(new ValueEventListener() {
+-            @Override
+-            public void onDataChange(@NonNull DataSnapshot snapshot) {
+-                correctUsername = snapshot.getValue().toString();
+-                System.out.println(correctUsername);
+-            }
+ 
+-            @Override
+-            public void onCancelled(@NonNull DatabaseError error) {
+-
+-            }
+-        });
++        firebaseAuth = FirebaseAuth.getInstance();
+ 
+-        databaseReference = database.getReference("password");
+-        //databaseReference.setValue("def");
+-        databaseReference.addValueEventListener(new ValueEventListener() {@Override
+-        public void onDataChange(@NonNull DataSnapshot snapshot) {
+-            correctPassword = snapshot.getValue().toString();
+-            System.out.println(correctPassword);
+-        }
+-
+-        @Override
+-        public void onCancelled(@NonNull DatabaseError error) {
+-
+-        }});
+-
+-
+-
+-        sharedPreferences = getSharedPreferences("login", MODE_PRIVATE);
+-        // if the user is not logged in he should go back to to the login activity
+-//        if (sharedPreferences.getBoolean("logged", false)) {
+-//            goToMainActivity();
+-//        }
+-
+-//        loginButton.setOnClickListener(new View.OnClickListener() {
+-//            @Override
+-//            public void onClick(View view) {
+-//                //we should add a go to main activity we want to log in.
+-//                String username = usernameBox.getText().toString();
+-//                String password = passwordBox.getText().toString();
+-//                // We need to check if the username and password exist and after checking
+-//                //that they exist using a if statement we store its preference as logged and log in.
+-//                sharedPreferences.edit().putBoolean("logged",true).apply();
+-//                if (sharedPreferences.getBoolean("logged", true)) {
+-//                    GoToLandingPage();
+-//                }
+-//            }
+-//        });
++        checkbox();
++        loginButton.setOnClickListener(this);
++    }
++    // checks whether the users preference is set as true.
++    private void checkbox() {
++        SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFERENCES, MODE_PRIVATE);
++        String checker = sharedPreferences.getString("logged","");
++        if (checker.equals("true")){
++            Toast.makeText(LoginActivity.this, "Login Successfully",Toast.LENGTH_LONG).show();
++            //GoToLandingPage();
++
++        }
++    }
++    private void SaveLoginState() {
++        SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFERENCES, MODE_PRIVATE);
++        SharedPreferences.Editor editor = sharedPreferences.edit();
++        editor.putString("logged", "true");
++        editor.apply();
+     }
+ 
+-    //a method for moving from this activity to the main activity.
++
++    //a method for moving from this activity to the landing activity.
+     // main activity should be the landing page as we logged in
+-    public void GoToLandingPage() {
+-        Intent intent = new Intent(this, SubmitActivity.class);
+-        startActivity(intent);
++    public void GoToEmployerLandingPage() {
++//        Intent intent = new Intent(LoginActivity.this, EmployerLandingPage.class);
++//        //WELCOME_MESSAGE = "Welcome employer !";
++//        //intent.putExtra("Welcome Employer", WELCOME_MESSAGE);
++//        startActivity(intent);
++        finish();
++    }
++
++    public void GoToEmployeeLandingPage() {
++//        Intent intent = new Intent(LoginActivity.this, EmployeeLandingPage.class);
++        //WELCOME_MESSAGE = "Welcome employer !";
++        //intent.putExtra("Welcome Employer", WELCOME_MESSAGE);
++//        startActivity(intent);
++        finish();
+     }
+ 
+     @Override
+@@ -107,22 +97,30 @@
+         String username = usernameBox.getText().toString();
+         String password = passwordBox.getText().toString();
+ 
+-
+-        String message;
+-        if (correctUsername.equals(username) && correctPassword.equals(password)){
+-            message = "log in succeed";
+-        }else{
+-            message = "log in failure";
+-        }
+-
+-        Toast toast = Toast.makeText(getApplicationContext(), message, Toast.LENGTH_LONG);
+-        toast.show();
++        firebaseAuth.signInWithEmailAndPassword(username, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
++            @Override
++            public void onComplete(@NonNull Task<AuthResult> task) {
++                String message;
++                if (task.isSuccessful()) {
++                    SaveLoginState();
++                    message = "log in succeed";
++                    if (employerCheck) {
++                        GoToEmployerLandingPage();
++                    }
++                    else {
++                        GoToEmployeeLandingPage();
++                    }
++
++                }else {
++                    message = "log in failure";
++                }
++                Toast toast = Toast.makeText(getApplicationContext(), message, Toast.LENGTH_LONG);
++                toast.show();
+ 
+-        // We need to check if the username and password exist and after checking
+-        //that they exist using a if statement we store its preference as logged and log in.
+-        sharedPreferences.edit().putBoolean("logged", true).apply();
+-        if (sharedPreferences.getBoolean("logged", true)) {
+-            GoToLandingPage();
+-        }
++            }
++        });
++
++
++
+     }
+ }
+Index: app/src/test/java/com/example/g15_gp/RegisterUserTest.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/test/java/com/example/g15_gp/RegisterUserTest.java b/app/src/test/java/com/example/g15_gp/RegisterUserTest.java
+new file mode 100644
+--- /dev/null	(date 1665894324897)
++++ b/app/src/test/java/com/example/g15_gp/RegisterUserTest.java	(date 1665894324897)
+@@ -0,0 +1,77 @@
++package com.example.g15_gp;
++
++import android.os.Bundle;
++import android.widget.EditText;
++
++import junit.framework.TestCase;
++
++import org.junit.AfterClass;
++import org.junit.BeforeClass;
++import org.junit.Test;
++
++import static org.junit.Assert.assertEquals;
++import static org.junit.Assert.assertFalse;
++import static org.junit.Assert.assertTrue;
++
++public class RegisterUserTest {
++
++    static RegisterUser registerUser;
++
++    @BeforeClass
++    public static void setup() {
++
++         registerUser = new RegisterUser();
++    }
++
++    @AfterClass
++    public static void tearDown() {
++        System.gc();
++    }
++
++
++
++    public void testOnCreate() {
++
++     //   assertFalse(registerUser.onCreate(getName(""))
++//        assertFalse();
++    }
++
++    @Test
++    public void checkIfFullnameEmpty(){
++        assertTrue(registerUser.isEmptyFullname(""));
++    }
++
++
++
++
++    @Test
++    public void checkIfEmailIsValid() {
++        assertTrue(registerUser.isValidEmailAddress("abc123@dal.ca"));
++    }
++
++    @Test
++    public void checkIfEmailIsInvalid() {
++        assertFalse(registerUser.isValidEmailAddress("abc.123dal.ca"));
++    }
++
++
++
++
++
++
++
++
++
++    public void testOnClick() {
++
++
++
++    }
++
++    public void testOnRadioButtonClicked() {
++
++
++
++
++    }
++}
+\ No newline at end of file
+Index: app/src/main/java/com/example/g15_gp/RegisterUser.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/g15_gp/RegisterUser.java b/app/src/main/java/com/example/g15_gp/RegisterUser.java
+--- a/app/src/main/java/com/example/g15_gp/RegisterUser.java	(revision 74a4000233513f550dce934561c4853546c0c277)
++++ b/app/src/main/java/com/example/g15_gp/RegisterUser.java	(date 1665894324888)
+@@ -20,6 +20,8 @@
+ import com.google.firebase.auth.FirebaseAuth;
+ import com.google.firebase.database.FirebaseDatabase;
+ 
++import java.io.StringBufferInputStream;
++
+ public class RegisterUser extends AppCompatActivity implements View.OnClickListener {
+ 
+ 
+@@ -78,8 +80,32 @@
+         }
+     }
+ 
++
++
++    protected String getEmailAddress() {
++        EditText emailAddress = findViewById(R.id.email);
++        return emailAddress.getText().toString().trim();
++    }
++
++    protected boolean isValidEmailAddress(String emailAddress) {
++
++        return emailAddress.contains("@");
++    }
++
++
++
++    public String getEditFullname() {
++        EditText editFullname = findViewById(R.id.name);
++        return editFullname.getText().toString().trim();
++    }
++    protected boolean isEmptyFullname(String fullname){
++        return fullname.isEmpty();
++    }
++
++
+     private void registerUser() {
+ 
++
+         String fullname = editFullname.getText().toString().trim();
+         String email = editEmail.getText().toString().trim();
+         String password = editPassword.getText().toString().trim();
+Index: app/src/main/java/com/example/g15_gp/EmployerLandingPage.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/g15_gp/EmployerLandingPage.java b/app/src/main/java/com/example/g15_gp/EmployerLandingPage.java
+new file mode 100644
+--- /dev/null	(date 1665884792636)
++++ b/app/src/main/java/com/example/g15_gp/EmployerLandingPage.java	(date 1665884792636)
+@@ -0,0 +1,40 @@
++//package com.example.g15_gp;
++//
++//import androidx.appcompat.app.AppCompatActivity;
++//
++//import android.annotation.SuppressLint;
++//import android.app.Activity;
++//import android.app.Activity;
++//import android.content.Context;
++//import android.content.Intent;
++//import android.os.Bundle;
++//import android.view.View;
++//import android.widget.AdapterView;
++//import android.widget.ArrayAdapter;
++//import android.widget.Spinner;
++//import android.widget.TextView;
++//import android.widget.Toast;
++//import android.widget.Button;
++//import android.widget.EditText;
++//
++//public class EmployerLandingPage extends Activity implements View.OnClickListener{
++//
++//    @Override
++//    public void onCreate(Bundle bundle) {
++//        super.onCreate(bundle);
++//        setContentView(R.layout.Employer_landing_page);
++//        Button logoutButton;
++//        Intent intent = getIntent();
++//
++//        // show a welcome message to employer
++//        Toast toast = Toast.makeText(getApplicationContext(), "Welcome Employers!", Toast.LENGTH_LONG);
++//        toast.show();
++//    }
++//
++//
++//    @Override
++//    public void onClick(View view){
++//
++//    }
++//
++//}
